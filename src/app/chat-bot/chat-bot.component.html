@@ -1,0 +1,130 @@
+<div class="chat-container">
+    <mat-toolbar class="chatToolbar" style="background-color: #ffb74d;">
+        <span style="font-size: 14px;">Toucan Chat</span>
+        <span class="spacer"></span>
+        <button mat-icon-button (click)="closePopup()" [disabled]="chatbot.isPopupClose ">
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-toolbar>
+    <div class="cb-scroll">
+        <div class="cb-content">
+            <div class="advertisement">
+            </div>
+            <div class="welcome-msgs" *ngFor="let tString of chatbot.typedStrings">
+                <p>{{tString}}</p>
+            </div>
+            <div *ngIf="chatbot.hideCard || chatbot.messages.length > 1 ">
+                <p style="padding: 8px 0 ; font-size: 14px; font-weight: 500;">Type your query below or select an option
+                    to
+                    continue.</p>
+                <div *ngIf="hideMenu" fxLayout="row wrap" fxLayoutGap="8px">
+                    <button mat-stroked-button class="rounded-button" (click)="checkType( 'ACSTMNT')"
+                        style="color: #ffb74d; border-color: #ffb74d;"><span>Account Statement</span></button>
+                    <!-- <button mat-stroked-button class="rounded-button"
+                        (click)="checkType( 'TRANSCTION')">Transaction Related
+                    </button> -->
+                    <button mat-stroked-button style="color: #ffb74d; border-color: #ffb74d;"
+                        class="rounded-button">Transaction Related
+                    </button>
+                    <button mat-stroked-button class="rounded-button" style="color: #ffb74d; border-color: #ffb74d;">Tax
+                        Certificate</button>
+                    <button mat-stroked-button class="rounded-button" style="color: #ffb74d; border-color: #ffb74d;"
+                        (click)="checkType('RDISPUTE')">Raise a
+                        Concern</button>
+                </div>
+                <div fxLayout="row wrap" fxLayoutGap="8px" *ngIf="showTransactions ">
+
+                    <button mat-stroked-button (click)="ActStmntType('CFY');getActStmnt() "
+                        style="color: #ffb74d; border-color: #ffb74d;" class="rounded-button">Current
+                        Fiscal Year</button>
+                    <button mat-stroked-button (click)="ActStmntType('LFY');getActStmnt()"
+                        style="color: #ffb74d; border-color: #ffb74d;" class="rounded-button">Last Fiscal
+                        Year</button>
+                    <button mat-stroked-button (click)="ActStmntType('CSTM');getActStmnt()"
+                        style="color: #ffb74d; border-color: #ffb74d;" class="rounded-button">Custom</button>
+                </div>
+            </div>
+            <div *ngIf="isTxnRelated " fxLayout="row wrap" fxLayoutGap="8px">
+                <button mat-stroked-button class="rounded-button" (click)="checkTxnType('PYMTNOTSETTLED')"><span>Payment
+                        Not Settled</span></button>
+                <button mat-stroked-button class="rounded-button" (click)="checkTxnType('PAYADVICE')">Payment Advice
+                </button>
+            </div>
+            <div fxLayout="row wrap" fxLayoutGap="8px" *ngIf="isPymntNotSettled">
+                <button mat-stroked-button class="rounded-button"><span>Custom Date</span></button>
+                <button mat-stroked-button class="rounded-button">RRN
+                </button>
+                <button mat-stroked-button class="rounded-button">Transaction Amount
+                </button>
+            </div>
+            <div *ngIf="isCustumDates">
+                <p style="font-size: 14px;font-weight: 600;">Select start date and end date</p>
+                <form name="dateForm" #dateForm="ngForm" fxLayoutAlign="center center" fxLayout="column">
+                    <div fxLayout="row">
+                        <div fxLayout="column" style="width: 160px;">
+                            <mat-form-field appearance="outline" class="datePicker">
+                                <mat-label>From Date</mat-label>
+                                <input matInput [matDatepicker]="picker1" name="frmDate" [(ngModel)]="frmDate">
+                                <mat-datepicker-toggle matIconSuffix class="custom-icon"
+                                    [for]="picker1"></mat-datepicker-toggle>
+                                <mat-datepicker #picker1></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <span>&nbsp;</span>
+                        <div fxLayout="column">
+                            <mat-form-field appearance="outline" style="width: 160px;" class="datePicker">
+                                <mat-label>To Date</mat-label>
+                                <input matInput [matDatepicker]="picker" name="toDate" [(ngModel)]="toDate">
+                                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div *ngFor="let msgObj of chatbot?.messageArray; let i=index">
+                <div *ngIf="msgObj?.question" style="text-align: right;"><span
+                        class="rightView ptag">{{msgObj?.question}}</span>
+
+                </div>
+                <!-- <div *ngIf="msgObj?.answer?.answer">
+                    <span  class="leftView ptag">{{msgObj?.answer?.answer}}</span>
+                    <p *ngIf=" chatbot!.messageArray && i === chatbot!.messageArray!.length - 1" style="padding: 40px 0px;"></p>
+                </div> -->
+
+
+                <span class="leftView ptag">{{ chatbot.typedString[i] }}</span>
+
+                <!-- <div *ngFor="let tString of chatbot.typedString">
+
+                    <span class="leftView ptag">{{ tString }}</span>
+                    <span *ngIf="msgObj?.answer?.answer" class="leftView ptag">{{tString}}</span>
+                </div> -->
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+    <div class="chatInput" style="height: 60px; text-align: center; position: relative;">
+        <form name="loginForm" #loginForm='ngForm'>
+            <div style="height: 18px;">
+                <mat-form-field appearance="outline" style="width: 352px; height: 40px !important;" class="chtInput">
+                    <mat-label>Enter Message</mat-label>
+                    <input matInput type="text" name="userinput" [(ngModel)]="userMessage" autocomplete="off">
+                    <button mat-icon-button matSuffix (click)="startChat(loginForm)">
+                        <mat-icon>send</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+        </form>
+    </div>
+    <button mat-mini-fab style="position:absolute;bottom: 80px; right:24px; z-index: 5;" class="clearBtn"
+        matTooltipPosition="above" matTooltip="Main menu" (click)="goToMainMenu()"
+        *ngIf="!hideMenu || showTransactions || isTxnRelated ||isLastFiscalYear || isCustumDates">
+        <mat-icon>clear_all</mat-icon>
+    </button>
+</div>
